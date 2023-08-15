@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../../../dist/vue.js"></script>
+<body>
+    <div id="app">
+        <p id="p1"></p>
+        <p id="p2"></p>
+    </div>
+</body>
+<script>
+    const {reactive, effect} = Vue;
+    const value = reactive({
+        name: '张三'
+    })
+
+    effect(() => {
+        document.querySelector('#p1').innerHTML = value.name
+    })
+    effect(() => {
+        document.querySelector('#p2').innerHTML = value.name
+    })
+    console.log(value)
+    console.log(value.name)
+    setTimeout(() => {
+        value.name = '李四'
+    }, 2000)
+</script>
+</html>

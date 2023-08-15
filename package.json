@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -19,7 +20,11 @@
   },
   "homepage": "https://github.com/Little-LittleProgrammer/mini-vue#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.4",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-typescript": "^11.1.2",
     "rollup": "^3.28.0",
-    "rollup-plugin-typescript2": "^0.35.0"
+    "typescript": "^4.7.4",
+    "tslib": "^2.4.0"
   }
 }
