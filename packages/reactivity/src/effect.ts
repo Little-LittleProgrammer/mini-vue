@@ -1,7 +1,15 @@
-import { isArray } from "@vue/shared";
+import { extend, isArray } from "@vue/shared";
 import { Dep, createDep } from "./dep";
+import { ComputedRefImpl } from "./computed";
 
 type KeyToDepMap = Map<any, Set<ReactiveEffect>>;
+
+export type EffectScheduler = (...args: any[]) => any
+ 
+export interface ReactiveEffectOptions {
+    lazy?: boolean;
+    scheduler?: (...args: any[]) => any
+}
 
 /**
  * 收集所有依赖的 WeakMap
@@ -12,17 +20,26 @@ type KeyToDepMap = Map<any, Set<ReactiveEffect>>;
  */
 const targetMap = new WeakMap<any, KeyToDepMap>()
 
-export function effect<T =any>(fn: () => T) {
+export function effect<T =any>(fn: () => T, options?: ReactiveEffectOptions) {
     const _effect = new ReactiveEffect(fn);
 
-    _effect.run()
+    if (options) {
+        extend(_effect, options);
+    }
+    if (!options || !options.lazy) {
+        _effect.run()  
+    }
 }
 
 export let activeEffect: ReactiveEffect | undefined;
 
 export class ReactiveEffect<T = any>{
-    constructor(public fn: () => T) {
-    
+
+    computed?: ComputedRefImpl<T>
+    constructor(
+        public fn: () => T,
+        public scheduler: EffectScheduler | null = null
+    ) {
     }
     run() {
         activeEffect = this;
@@ -90,11 +107,23 @@ export function trigger(
  */
 export function triggerEffects(dep: Dep){
     const effects = isArray(dep) ? dep : [...dep]
+    // 先执行 computed 的 effect，后执行不是 computed 的 effect，控制执行顺序。避免死循环
     for (const effect of effects) {
-        triggerEffect(effect)
+        if (effect.computed) {
+            triggerEffect(effect)
+        }
+    }
+    for (const effect of effects) {
+        if (!effect.computed) {
+            triggerEffect(effect)
+        }
     }
 }
 
 export function triggerEffect(effect: ReactiveEffect) {
-    effect.run()
+    if (effect.scheduler) {
+        effect.scheduler()
+    } else {
+        effect.run()
+    }
 }

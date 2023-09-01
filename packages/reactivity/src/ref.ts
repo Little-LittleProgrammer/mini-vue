@@ -23,7 +23,7 @@ class RefImpl<T> {
     private _value: T
     private _rawValue: T // 原值
     public dep?:Dep;
-    public readonly __v_isRef = true
+    public readonly __v_isRef = true // 判断是否是 ref 对象
     constructor(value: T, public readonly __v_isShallow: boolean) {
         this._rawValue = value
         this._value = __v_isShallow ? value : toReactive(value)
@@ -44,10 +44,15 @@ class RefImpl<T> {
     }
 }
 
+type RefBase<T> = {
+    dep?: Dep
+    value: T
+  }
+
 /**
  * 收集依赖
  */
-export function trackRefValue(ref: RefImpl<any>) {
+export function trackRefValue(ref: RefBase<any>) {
     if (activeEffect) {
         trackEffects(ref.dep || (ref.dep = createDep()))
     }
@@ -56,7 +61,7 @@ export function trackRefValue(ref: RefImpl<any>) {
 /**
  * 触发依赖
  */
-export function triggerRefValue(ref: RefImpl<any>, newValue) {
+export function triggerRefValue(ref: RefBase<any>, newValue?: any) {
     if (ref.dep) {
         triggerEffects(ref.dep)
     }
