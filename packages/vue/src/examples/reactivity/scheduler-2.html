@@ -9,25 +9,31 @@
 <body>
     <div id="app">
         <p id="p1"></p>
-        <p id="p2"></p>
     </div>
 </body>
 <script>
-    const {reactive, effect, watch} = Vue;
+    const {reactive, effect, queuePreFlushCb} = Vue;
     const value = reactive({
         name: '张三'
     })
 
     effect(() => {
         document.querySelector('#p1').innerHTML = value.name
+        console.log(value.name)
+    }, {
+        scheduler() {
+            // 1, 影响代码执行顺序
+            // 2. 控制代码执行规则
+            queuePreFlushCb(() => {
+                console.log(value.name)
+            })
+        }
     })
-
-    watch(value, (val, oldVal) => {
-        console.log('watch 触发')
-        console.log('val', val)
-    }, {immediate: true})
+    value.name = '李四'
+    value.name = '王五'
+    console.log('代码结束')
     setTimeout(() => {
-        value.name = '李四'
+        value.name = '哈六'
     }, 2000)
 </script>
 </html>

@@ -8,7 +8,7 @@ export type EffectScheduler = (...args: any[]) => any
  
 export interface ReactiveEffectOptions {
     lazy?: boolean;
-    scheduler?: (...args: any[]) => any
+    scheduler?: EffectScheduler
 }
 
 /**
@@ -44,6 +44,8 @@ export class ReactiveEffect<T = any>{
     run() {
         activeEffect = this;
         return this.fn()
+    }
+    stop() {
     }
 }
 
