@@ -1,5 +1,8 @@
 import { isOn } from "@vue/shared"
 import { patchClass } from "./modules/class"
+import { RendererElement } from "@vue/runtime-core"
+import { patchDOMProp } from "./modules/props"
+import { patchAttr } from "./modules/attrs"
 
  /**
     * 为 prop 进行打补丁操作
@@ -11,7 +14,33 @@ import { patchClass } from "./modules/class"
         // TODO: style
     } else if (isOn(key)) {
         // TODO: 事件
-    } else {
+    } else if (shouldSetAsProp(el, key)) {
+        // 通过 DOM Properties 制定
+        patchDOMProp(el, key, nextValue)
+    } else  {
         // TODO: 其他属性
+        patchAttr(el, key, nextValue)
     }
+}
+/**
+* 判断指定元素的指定属性是否可以通过 DOM Properties 指定
+*/
+function shouldSetAsProp(el: Element, key: string) {
+
+    // #1787, #2840 表单元素的表单属性是只读的，必须设置为属性 attribute
+    if (key === 'form') {
+        return false
+    }
+
+    // #1526 <input list> 必须设置为属性 attribute
+    if (key === 'list' && el.tagName === 'INPUT') {
+        return false
+    }
+
+    // #2766 <textarea type> 必须设置为属性 attribute
+    if (key === 'type' && el.tagName === 'TEXTAREA') {
+        return false
+    }
+
+    return key in el
 }
