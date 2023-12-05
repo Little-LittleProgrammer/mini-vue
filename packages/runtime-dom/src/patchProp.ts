@@ -3,6 +3,8 @@ import { patchClass } from "./modules/class"
 import { RendererElement } from "@vue/runtime-core"
 import { patchDOMProp } from "./modules/props"
 import { patchAttr } from "./modules/attrs"
+import { patchStyle } from "./modules/style"
+import { patchEvent } from "./modules/events"
 
  /**
     * 为 prop 进行打补丁操作
@@ -12,8 +14,10 @@ import { patchAttr } from "./modules/attrs"
         patchClass(el, nextValue)
     } else if (key === 'style') {
         // TODO: style
+        patchStyle(el, prevValue, nextValue)
     } else if (isOn(key)) {
         // TODO: 事件
+        patchEvent(el, key, prevValue, nextValue)
     } else if (shouldSetAsProp(el, key)) {
         // 通过 DOM Properties 制定
         patchDOMProp(el, key, nextValue)

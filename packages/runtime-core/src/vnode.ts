@@ -17,7 +17,8 @@ export interface VNode <
     children: any;
     shapeFlag: number;
     el: HostNode | null;
-    key: any
+    key: any;
+    component: any
 }
 
 /**
@@ -29,7 +30,13 @@ export interface VNode <
 */
 export function createVNode(type, props, children): VNode {
     // 通过 bit 位处理 shapeFlag 类型, dom, 第一次运算0代表先不处理, 
-    const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : 0
+    const shapeFlag = isString(type)
+    ? ShapeFlags.ELEMENT
+    : isObject(type)
+    ? ShapeFlags.STATEFUL_COMPONENT
+    : isFunction(type)
+    ? ShapeFlags.FUNCTIONAL_COMPONENT
+    : 0
 
     return createBaseVNode(type, props, children, shapeFlag)
 }

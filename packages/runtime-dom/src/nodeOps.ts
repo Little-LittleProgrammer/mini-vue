@@ -31,6 +31,16 @@ export const nodeOps: Omit<RendererOptions, 'patchProp'> = {
         if (parent) {
             parent.removeChild(child)
         }
-    }
+    },
+
+    createText: (text) =>  {
+        return document.createTextNode(text)
+    },
+
+    setText: (node, text) => {
+        node.nodeValue = text
+    },
+
+    createComment: (text) => document.createComment(text)
 
 }

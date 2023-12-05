@@ -12,14 +12,14 @@
 
 <script>
     const {h,render} = Vue;
-    const vnode1 = h('div', {class: 'test'}, 'hello render')
-    console.log(vnode)
+    const vnode1 = h('div', {class: 'test', style: {color: 'red'}, onClick: () => {console.log('111')}}, 'hello render')
+    console.log(vnode1)
     
     const app = document.getElementById('app')
-    render(vnode, app)
+    render(vnode1, app)
 
     setTimeout(() => {
-        const vnode2 = h('div', {class: 'test'}, 'hello patch')
+        const vnode2 = h('div', {class: 'test',style: {fontSize: '20px'}, onClick: () => {console.log('222')}}, 'hello patch')
         render(vnode2, app)
     }, 2000)
 </script>
