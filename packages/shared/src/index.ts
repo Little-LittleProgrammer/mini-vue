@@ -1,4 +1,5 @@
 export * from './shapeFlags'
+export * from './normalizeProp'
 
 export function isString(val: unknown): val is string {
     return toString.call(val) === `[object String]`

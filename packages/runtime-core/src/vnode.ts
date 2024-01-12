@@ -1,10 +1,10 @@
-import { ShapeFlags, isArray, isFunction, isObject, isString } from "@vue/shared";
+import { ShapeFlags, isArray, isFunction, isObject, isString, normalizeClass } from "@vue/shared";
 import { RendererElement, RendererNode } from "./renderer";
 
 export const Fragment = Symbol('Fragment' ) 
-  export const Text = Symbol( 'Text')
-  export const Comment = Symbol('Comment' )
-  export const Static = Symbol('Static')
+export const Text = Symbol( 'Text')
+export const Comment = Symbol('Comment' )
+export const Static = Symbol('Static')
 
 export interface VNode <
     HostNode = RendererNode,
@@ -38,6 +38,14 @@ export function createVNode(type, props, children): VNode {
     ? ShapeFlags.FUNCTIONAL_COMPONENT
     : 0
 
+    if (props) {
+		// 处理 class
+		let { class: klass, style } = props
+		if (klass && !isString(klass)) {
+			props.class = normalizeClass(klass)
+		}
+	}
+
     return createBaseVNode(type, props, children, shapeFlag)
 }
 
@@ -49,13 +57,23 @@ function createBaseVNode(type, props, children, shapeFlag) {
         __v_isVNode: true,
         type,
         props,
-        shapeFlag
+        shapeFlag,
+        key: props?.key || null
     } as VNode
 
     // 第二次 children
     normalizeChildren(vnode, children)
 
     return vnode
+}
+
+export { createVNode as createElementVNode }
+
+/**
+ * 创建注释节点
+ */
+export function createCommentVNode(text) {
+	return createVNode(Comment, null, text)
 }
 
 // 标准化 children
