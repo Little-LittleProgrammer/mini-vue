@@ -1,46 +1,53 @@
-import { RendererOptions } from "packages/runtime-core/src/renderer";
+const doc = document
 
-export const nodeOps: Omit<RendererOptions, 'patchProp'> = {
-    /**
-   	 * 插入指定元素到指定位置
-   	 */
-    insert:(el, parent, anchor) => {
-        parent.insertBefore(el, anchor || null)
-    },
+export const nodeOps = {
+	/**
+	 * 插入指定元素到指定位置
+	 */
+	insert: (child, parent, anchor) => {
+		parent.insertBefore(child, anchor || null)
+	},
 
-    /**
-   	 * 创建指定 Element
-   	 */
-    createElement: (tag) => {
-        const el = document.createElement(tag);
-        return el
-    },
+	/**
+	 * 创建指定 Element
+	 */
+	createElement: (tag): Element => {
+		const el = doc.createElement(tag)
 
-    /**
-   	 * 为指定的 element 设置 textContent
-   	 */
-    setElementText: (el, text) => {
-        el.textContent = text
-    },
+		return el
+	},
 
-    /**
-     * 删除指定元素
-     */
-    remove: (child) => {
-        const parent = child.parentNode
-        if (parent) {
-            parent.removeChild(child)
-        }
-    },
+	/**
+	 * 为指定的 element 设置 textContent
+	 */
+	setElementText: (el, text) => {
+		el.textContent = text
+	},
 
-    createText: (text) =>  {
-        return document.createTextNode(text)
-    },
+	/**
+	 * 删除指定元素
+	 */
+	remove: (child) => {
+		const parent = child.parentNode
+		if (parent) {
+			parent.removeChild(child)
+		}
+	},
 
-    setText: (node, text) => {
-        node.nodeValue = text
-    },
+	/**
+	 * 创建 Text 节点
+	 */
+	createText: (text) => doc.createTextNode(text),
 
-    createComment: (text) => document.createComment(text)
+	/**
+	 * 设置 text
+	 */
+	setText: (node, text) => {
+		node.nodeValue = text
+	},
 
+	/**
+	 * 创建 Comment 节点
+	 */
+	createComment: (text) => doc.createComment(text)
 }

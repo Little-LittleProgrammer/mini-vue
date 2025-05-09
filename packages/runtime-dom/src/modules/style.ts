@@ -1,23 +1,36 @@
-import { RendererElement } from "@vue/runtime-core";
-import { isString } from "@vue/shared";
+import { isString } from '@vue/shared'
 
-export function patchStyle(el: RendererElement, prevValue: any, nextValue: any) {
-    const style = el.style;
-    let isCssString = isString(nextValue)
-    if (nextValue && !isCssString) {
-        for (let key in nextValue) {
-            setStyle(style, key, nextValue[key])
-        }
-        if (prevValue && !isString(prevValue)) {
-            for (let key in prevValue) {
-                if (nextValue[key] == null) {
-                    setStyle(style, key, '')
-                }
-            }
-        }
-    }
+/**
+ * 为 style 属性进行打补丁
+ */
+export function patchStyle(el: Element, prev, next) {
+	// 获取 style 对象
+	const style = (el as HTMLElement).style
+	// 判断新的样式是否为纯字符串
+	const isCssString = isString(next)
+	if (next && !isCssString) {
+		// 赋值新样式
+		for (const key in next) {
+			setStyle(style, key, next[key])
+		}
+		// 清理旧样式
+		if (prev && !isString(prev)) {
+			for (const key in prev) {
+				if (next[key] == null) {
+					setStyle(style, key, '')
+				}
+			}
+		}
+	}
 }
 
-function setStyle(style: CSSStyleDeclaration, key, value) {
-    style[key] = value
+/**
+ * 赋值样式
+ */
+function setStyle(
+	style: CSSStyleDeclaration,
+	name: string,
+	val: string | string[]
+) {
+	style[name] = val
 }

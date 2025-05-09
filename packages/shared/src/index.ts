@@ -1,42 +1,50 @@
-export * from './shapeFlags'
-export * from './normalizeProp'
+export * from './toDisplayString'
 
-export function isString(val: unknown): val is string {
-    return toString.call(val) === `[object String]`
-}
+/**
+ * 判断是否为一个数组
+ */
+export const isArray = Array.isArray
 
-export function isArray(target: unknown): target is Array<any> {
-    return Array.isArray(target)
-}
+/**
+ * 判断是否为一个对象
+ */
+export const isObject = (val: unknown) =>
+	val !== null && typeof val === 'object'
 
-export function isObject(val: unknown): val is Object {
-    return val !== null && typeof val === 'object'
-}
+/**
+ * 对比两个数据是否发生了改变
+ */
+export const hasChanged = (value: any, oldValue: any): boolean =>
+	!Object.is(value, oldValue)
 
-// 对比值是否发生改变
-export const hasChanged = (value: any, oldValue: any): boolean => {
-    return !Object.is(value, oldValue)
-}
-  
-export function isFunction(val: unknown): val is Function   {
-    return typeof val === 'function'
-}
+/**
+ * 是否为一个 function
+ */
+export const isFunction = (val: unknown): val is Function =>
+	typeof val === 'function'
 
+/**
+ * Object.assign
+ */
 export const extend = Object.assign
 
+/**
+ * 只读的空对象
+ */
+export const EMPTY_OBJ: { readonly [key: string]: any } = {}
 
-export const EMPTY_OBJ: {readonly [key: string]: any} = {}
+/**
+ * 判断是否为一个 string
+ */
+export const isString = (val: unknown): val is string => typeof val === 'string'
 
-const onReg = /^on[^a-z]/
+const onRE = /^on[^a-z]/
+/**
+ * 是否 on 开头
+ */
+export const isOn = (key: string) => onRE.test(key)
 
-export const isOn = (key: string) => {
-    return onReg.test(key)
-}
-
-export const NOOP = () => {}
-
-export const invokeArrayFns = (fns: Function[], arg?: any) => {
-    for (let i = 0; i < fns.length; i++) {
-      fns[i](arg)
-    }
-  }
+/**
+ * 永远返回 false
+ */
+export const NO = () => false
