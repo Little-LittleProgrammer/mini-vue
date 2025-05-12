@@ -79,7 +79,13 @@ export function triggerEffects(dep: Dep) {
   // 	triggerEffect(effect)
   // }
 
-  // 不在依次触发，而是先触发所有的计算属性依赖，再触发所有的非计算属性依赖
+  // 不再依次触发，而是先触发所有的计算属性依赖，再触发所有的非计算属性依赖
+  // 这样分开处理的原因：
+  // 1. 确保计算属性优先更新 - 当一个值变化时，依赖此值的计算属性应该先更新
+  // 2. 数据一致性 - 确保其他effect（如渲染函数）使用的是最新计算出的值
+  // 3. 避免"脏读" - 防止普通effect读取到过时的计算属性值
+  // 4. 减少重复计算 - 如果先执行普通effect，可能导致计算属性被多次触发
+  // 5. 性能优化 - 符合Vue的响应式系统设计原则，确保依赖关系正确传播
   for (const effect of effects) {
     if (effect.computed) {
       triggerEffect(effect)
@@ -96,9 +102,17 @@ export function triggerEffects(dep: Dep) {
  * 触发指定的依赖
  */
 export function triggerEffect(effect: ReactiveEffect) {
+  // scheduler（调度器）的主要用途：
+  // 1. 控制副作用函数的执行时机，允许延迟、异步或有条件地执行
+  // 2. 对频繁触发的副作用进行批处理和去重，提高性能
+  // 3. 实现计算属性的懒计算特性
+  // 4. 支持 watch 的防抖和节流功能
+  // 5. 在Vue组件更新中，用于协调多个组件的渲染顺序
   if (effect.scheduler) {
+    // 如果effect有调度器，优先使用调度器来间接执行副作用
     effect.scheduler()
   } else {
+    // 没有调度器时直接运行副作用函数
     effect.run()
   }
 }

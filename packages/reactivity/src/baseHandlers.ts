@@ -1,4 +1,6 @@
 import { track, trigger } from './effect'
+import { isObject } from '@vue/shared'
+import { toReactive } from './reactive'
 
 /**
  * getter 回调方法
@@ -14,7 +16,8 @@ function createGetter() {
 		const res = Reflect.get(target, key, receiver)
 		// 收集依赖
 		track(target, key)
-		return res
+		// 如果结果是对象，则将其转换为响应式对象再返回
+		return isObject(res) ? toReactive(res) : res
 	}
 }
 
