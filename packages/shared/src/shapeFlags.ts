@@ -1,3 +1,15 @@
+/**
+ * 用于描述 vnode 的类型和子节点类型
+ * 位运算模拟集合
+ * 1 1 1 1 1 1 
+ * 第一位表示 ELEMENT
+ * 第二位表示 FUNCTIONAL_COMPONENT
+ * 第三位表示 STATEFUL_COMPONENT
+ * 第四位表示 TEXT_CHILDREN
+ * 第五位表示 ARRAY_CHILDREN
+ * 第六位表示 SLOTS_CHILDREN
+ * 
+ */
 export const enum ShapeFlags {
 	/**
 	 * type = Element

@@ -93,7 +93,7 @@ export function normalizeChildren(vnode: VNode, children: unknown) {
 	}
 	// 修改 vnode 的 chidlren
 	vnode.children = children
-	// 按位或赋值
+	// 按位或赋值, 求并集
 	vnode.shapeFlag |= type
 }
 
